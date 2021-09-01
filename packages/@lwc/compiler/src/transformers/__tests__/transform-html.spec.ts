@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
  */
 import { TransformOptions } from '../../options';
-import { transform } from '../transformer';
+import { transform, transformSync } from '../transformer';
 
 const TRANSFORMATION_OPTIONS: TransformOptions = {
     namespace: 'x',
@@ -28,4 +28,21 @@ it('should apply transformation for template file', async () => {
     const { code } = await transform(actual, 'foo.html', TRANSFORMATION_OPTIONS);
 
     expect(code).toContain(`tmpl.stylesheets = []`);
+});
+
+it('should escape CSS scope tokens', () => {
+    const actual = `<template></template>`;
+    const { code } = transformSync(actual, 'bar.html', {
+        namespace: '@foo',
+        name: 'bar',
+    });
+
+    // We don't want the generated code to contain invalid CSS selector strings, e.g.:
+    //   tmpl.stylesheetTokens = {
+    //     hostAttribute: \"@foo-bar_bar-host\",
+    //     shadowAttribute: \"@foo-bar_bar\"
+    //   };
+    // In the above case, `@` is not safe as part of a CSS selector.
+    expect(code).toContain('hostAttribute: "\\\\@foo-bar_bar-host"');
+    expect(code).toContain('shadowAttribute: "\\\\@foo-bar_bar"');
 });

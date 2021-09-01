@@ -29,7 +29,11 @@
         "@lwc/errors": "2.3.4",
         "@lwc/shared": "2.3.4",
         "@lwc/style-compiler": "2.3.4",
-        "@lwc/template-compiler": "2.3.4"
+        "@lwc/template-compiler": "2.3.4",
+        "cssesc": "^3.0.0"
+    },
+    "devDependencies": {
+        "@types/cssesc": "^3.0.0"
     },
     "publishConfig": {
         "access": "public"

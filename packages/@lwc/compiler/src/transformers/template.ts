@@ -5,6 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
  */
 import * as path from 'path';
+import cssesc from 'cssesc';
 
 import {
     CompilerError,
@@ -53,16 +54,20 @@ export default function templateTransform(
     };
 }
 
+// Ensure that we don't use characters that aren't safe for CSS selectors.
+function escapeCssSelector(input: string): string {
+    return cssesc(input, { isIdentifier: true });
+}
+
 function serialize(
     code: string,
     filename: string,
     { namespace, name }: NormalizedTransformOptions
 ): string {
     const cssRelPath = `./${path.basename(filename, path.extname(filename))}.css`;
-    const scopingAttribute = `${namespace}-${name}_${path.basename(
-        filename,
-        path.extname(filename)
-    )}`;
+    const scopingAttribute = escapeCssSelector(
+        `${namespace}-${name}_${path.basename(filename, path.extname(filename))}`
+    );
     let buffer = '';
     buffer += `import _implicitStylesheets from "${cssRelPath}";\n\n`;
     buffer += code;
@@ -72,8 +77,8 @@ function serialize(
     buffer += `}\n`;
 
     buffer += `tmpl.stylesheetTokens = {\n`;
-    buffer += `  hostAttribute: "${scopingAttribute}-host",\n`;
-    buffer += `  shadowAttribute: "${scopingAttribute}"\n`;
+    buffer += `  hostAttribute: ${JSON.stringify(`${scopingAttribute}-host`)},\n`;
+    buffer += `  shadowAttribute: ${JSON.stringify(scopingAttribute)}\n`;
     buffer += `};\n`;
 
     return buffer;
