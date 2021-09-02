@@ -28,6 +28,7 @@ const POLYFILL_COMPAT = require.resolve('es5-proxy-compat/polyfills.js');
 const TEST_UTILS = require.resolve('../../helpers/test-utils');
 const WIRE_SETUP = require.resolve('../../helpers/wire-setup');
 const TEST_SETUP = require.resolve('../../helpers/test-setup');
+const CACHE_NATIVE_SHADOW_APIS = require.resolve('../../helpers/cache-native-shadow');
 
 function createPattern(location, config = {}) {
     return {
@@ -39,6 +40,7 @@ function createPattern(location, config = {}) {
 function getFiles() {
     const frameworkFiles = [];
 
+    frameworkFiles.push(createPattern(CACHE_NATIVE_SHADOW_APIS));
     if (COMPAT) {
         frameworkFiles.push(createPattern(POLYFILL_COMPAT));
         frameworkFiles.push(createPattern(SYNTHETIC_SHADOW_COMPAT));
