@@ -47,7 +47,7 @@ it('returns an HTMLElement', () => {
     expect(elm instanceof HTMLElement).toBe(true);
 });
 
-if (!process.env.DISABLE_SYNTHETIC) {
+if (process.test.SYNTHETIC_SHADOW_ENABLED) {
     it('should create an element with a synthetic shadow root by default', () => {
         const elm = createElement('x-component', { is: Test });
         expect(elm.shadowRoot.constructor.name).toBe('SyntheticShadowRoot');
@@ -64,37 +64,31 @@ it('supports component constructors in circular dependency', () => {
     expect(elm instanceof HTMLElement).toBe(true);
 });
 
-if (process.env.DISABLE_SYNTHETIC) {
-    it('should create an element with a native shadow root if fallback is false', () => {
-        const elm = createElement('x-component', {
-            is: Test,
-        });
+it('should attach a shadow root instance that passes the instanceof test', () => {
+    const elm = createElement('x-component', { is: Test });
+    expect(elm.shadowRoot).toBeInstanceOf(ShadowRoot);
+});
 
-        expect(elm.shadowRoot).toBeInstanceOf(ShadowRoot);
-        expect(elm.shadowRoot.constructor.name).toBe('ShadowRoot');
+it('should create a shadowRoot in open mode when mode in not specified', () => {
+    const elm = createElement('x-component', {
+        is: Test,
+    });
+    expect(elm.shadowRoot.mode).toBe('open');
+});
+
+it('should create a shadowRoot in closed mode if the mode is passed as closed', () => {
+    const elm = createElement('x-shadow-root-getter', {
+        is: ShadowRootGetter,
+        mode: 'closed',
     });
 
-    it('should create a shadowRoot in open mode when mode in not specified', () => {
-        const elm = createElement('x-component', {
-            is: Test,
-        });
-        expect(elm.shadowRoot.mode).toBe('open');
-    });
+    // Since the shadowRoot property is not attached to the element in closed mode, we need to
+    // retrieve it by accessing the template property from the class.
+    const shadowRoot = elm.getShadowRoot();
 
-    it('should create a shadowRoot in closed mode if the mode is passed as closed', () => {
-        const elm = createElement('x-shadow-root-getter', {
-            is: ShadowRootGetter,
-            mode: 'closed',
-        });
-
-        // Since the shadowRoot property is not attached to the element in closed mode, we need to
-        // retrieve it by accessing the template property from the class.
-        const shadowRoot = elm.getShadowRoot();
-
-        expect(shadowRoot).toBeInstanceOf(ShadowRoot);
-        expect(shadowRoot.mode).toBe('closed');
-    });
-}
+    expect(shadowRoot).toBeInstanceOf(ShadowRoot);
+    expect(shadowRoot.mode).toBe('closed');
+});
 
 describe('locker integration', () => {
     it('should support component class that extend a mirror of the LightningElement', () => {

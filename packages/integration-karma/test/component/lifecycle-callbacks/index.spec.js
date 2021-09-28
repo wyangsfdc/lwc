@@ -142,26 +142,26 @@ orderings. For any given component, the invariants are:
 
 It's ok to update the orderings below after a refactor, as long as these invariants hold!
 */
-if (process.env.DISABLE_SYNTHETIC) {
+if (process.test.SYNTHETIC_SHADOW_ENABLED) {
     it(`should invoke connectedCallback and renderedCallback in the expected order (native shadow)`, () => {
         const elm = createElement('order-container', { is: Container });
         document.body.appendChild(elm);
         expect(window.timingBuffer).toEqual([
             'foo-a:connectedCallback',
+            'foo-internal-a:connectedCallback',
+            'foo-internal-a:renderedCallback',
             'foo-b:connectedCallback',
+            'foo-internal-b:connectedCallback',
+            'foo-internal-b:renderedCallback',
             'foo-c:connectedCallback',
             'foo-internal-c:connectedCallback',
             'foo-internal-c:renderedCallback',
             'foo-c:renderedCallback',
-            'foo-internal-b:connectedCallback',
-            'foo-internal-b:renderedCallback',
             'foo-b:renderedCallback',
             'foo-d:connectedCallback',
             'foo-internal-d:connectedCallback',
             'foo-internal-d:renderedCallback',
             'foo-d:renderedCallback',
-            'foo-internal-a:connectedCallback',
-            'foo-internal-a:renderedCallback',
             'foo-a:renderedCallback',
             'foo-e:connectedCallback',
             'foo-internal-e:connectedCallback',
@@ -175,20 +175,20 @@ if (process.env.DISABLE_SYNTHETIC) {
         document.body.appendChild(elm);
         expect(window.timingBuffer).toEqual([
             'foo-a:connectedCallback',
-            'foo-internal-a:connectedCallback',
-            'foo-internal-a:renderedCallback',
             'foo-b:connectedCallback',
-            'foo-internal-b:connectedCallback',
-            'foo-internal-b:renderedCallback',
             'foo-c:connectedCallback',
             'foo-internal-c:connectedCallback',
             'foo-internal-c:renderedCallback',
             'foo-c:renderedCallback',
+            'foo-internal-b:connectedCallback',
+            'foo-internal-b:renderedCallback',
             'foo-b:renderedCallback',
             'foo-d:connectedCallback',
             'foo-internal-d:connectedCallback',
             'foo-internal-d:renderedCallback',
             'foo-d:renderedCallback',
+            'foo-internal-a:connectedCallback',
+            'foo-internal-a:renderedCallback',
             'foo-a:renderedCallback',
             'foo-e:connectedCallback',
             'foo-internal-e:connectedCallback',

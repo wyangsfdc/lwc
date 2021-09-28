@@ -13,16 +13,14 @@ function isNativeShadowRootInstance(sr) {
 }
 
 function assertNativeShadowRootWhenPossible(elm) {
-    if (process.env.NATIVE_SHADOW_ROOT_DEFINED) {
+    if (process.test.NATIVE_SHADOW_ROOT_DEFINED) {
         expect(isNativeShadowRootInstance(elm.shadowRoot)).toBeTrue();
     } else {
         expect(isSyntheticShadowRootInstance(elm.shadowRoot)).toBeTrue();
     }
 }
 
-const SYNTHETIC_SHADOW_DEFINED = !process.env.DISABLE_SYNTHETIC;
-
-if (SYNTHETIC_SHADOW_DEFINED) {
+if (process.test.SYNTHETIC_SHADOW_ENABLED) {
     describe('when root component shadowSupportMode="any"', () => {
         let elm;
 

@@ -37,7 +37,7 @@ import ParentSpecialized from 'x/parentSpecialized';
      </x-container>
  </div>
  */
-if (!process.env.DISABLE_SYNTHETIC) {
+if (process.test.SYNTHETIC_SHADOW_ENABLED) {
     describe('synthetic shadow with patch flags OFF', () => {
         let lwcElementInsideShadow,
             divManuallyApendedToShadow,

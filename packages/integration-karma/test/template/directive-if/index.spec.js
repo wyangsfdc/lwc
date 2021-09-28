@@ -69,7 +69,30 @@ describe('if:true directive', () => {
                 expect(elm.shadowRoot.querySelector('.true')).not.toBeNull();
             });
     });
-    if (process.env.DISABLE_SYNTHETIC) {
+    if (process.test.SYNTHETIC_SHADOW_ENABLED) {
+        it('should update child with slot content if value changes', () => {
+            const elm = createElement('x-test', { is: XSlotted });
+            document.body.appendChild(elm);
+            const child = elm.shadowRoot.querySelector('x-child');
+            expect(child).not.toBeNull();
+            expect(child.querySelector('.content')).toBeNull();
+
+            child.show = true;
+
+            return Promise.resolve()
+                .then(() => {
+                    expect(child.querySelector('.content')).not.toBeNull();
+                    child.show = false;
+                })
+                .then(() => {
+                    expect(child.querySelector('.content')).toBeNull();
+                    child.show = true;
+                })
+                .then(() => {
+                    expect(child.querySelector('.content')).not.toBeNull();
+                });
+        });
+    } else {
         // In native shadow, the slotted content from parent is always queriable, its only the
         // child's <slot> that is rendered/unrendered based on the directive
         it('should update child with slot content if value changes', () => {
@@ -101,29 +124,6 @@ describe('if:true directive', () => {
                     const assignedNodes = slot.assignedNodes({ flatten: true });
                     expect(assignedNodes.length).toBe(1);
                     expect(assignedNodes[0]).toBe(assignedSlotContent);
-                });
-        });
-    } else {
-        it('should update child with slot content if value changes', () => {
-            const elm = createElement('x-test', { is: XSlotted });
-            document.body.appendChild(elm);
-            const child = elm.shadowRoot.querySelector('x-child');
-            expect(child).not.toBeNull();
-            expect(child.querySelector('.content')).toBeNull();
-
-            child.show = true;
-
-            return Promise.resolve()
-                .then(() => {
-                    expect(child.querySelector('.content')).not.toBeNull();
-                    child.show = false;
-                })
-                .then(() => {
-                    expect(child.querySelector('.content')).toBeNull();
-                    child.show = true;
-                })
-                .then(() => {
-                    expect(child.querySelector('.content')).not.toBeNull();
                 });
         });
     }

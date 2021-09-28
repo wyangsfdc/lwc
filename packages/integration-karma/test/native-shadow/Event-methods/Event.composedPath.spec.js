@@ -1,7 +1,7 @@
 import { createElement } from 'lwc';
 import Synthetic from 'x/synthetic';
 
-if (process.env.COMPAT !== true) {
+if (!process.test.COMPAT) {
     describe('[W-9846457] event access when using native shadow dom', () => {
         let nativeParent;
         let nativeChild;
@@ -99,18 +99,7 @@ if (process.env.COMPAT !== true) {
             document.body.appendChild(synthetic);
 
             let expected;
-            if (process.env.DISABLE_SYNTHETIC) {
-                expected = [
-                    div.shadowRoot,
-                    div,
-                    synthetic.shadowRoot,
-                    synthetic,
-                    document.body,
-                    document.documentElement,
-                    document,
-                    window,
-                ];
-            } else {
+            if (process.test.SYNTHETIC_SHADOW_ENABLED) {
                 // The synthetic shadow root is transparent to the native composedPath() because
                 // it's not actually rendered in the DOM. This is not an issue because LWC doesn't
                 // yet support native web components.
@@ -118,6 +107,17 @@ if (process.env.COMPAT !== true) {
                     div.shadowRoot,
                     div,
                     /* synthetic.shadowRoot, */
+                    synthetic,
+                    document.body,
+                    document.documentElement,
+                    document,
+                    window,
+                ];
+            } else {
+                expected = [
+                    div.shadowRoot,
+                    div,
+                    synthetic.shadowRoot,
                     synthetic,
                     document.body,
                     document.documentElement,

@@ -74,7 +74,7 @@ describe('Event.target', () => {
         div.dispatchEvent(new CustomEvent('test', { bubbles: true, composed: true }));
     });
 
-    if (!process.env.DISABLE_SYNTHETIC) {
+    if (process.test.SYNTHETIC_SHADOW_ENABLED) {
         describe('legacy behavior', () => {
             beforeAll(() => {
                 // Suppress error logging

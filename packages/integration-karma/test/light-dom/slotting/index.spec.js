@@ -55,9 +55,15 @@ describe('Slotting', () => {
     it('shadow container, light consumer', () => {
         const nodes = createTestElement('x-light-consumer', LightConsumer);
 
-        const expected = process.env.DISABLE_SYNTHETIC // native shadow doesn't output slots in innerHTML
-            ? '<x-shadow-container><p data-id="light-consumer-text">Hello from Light DOM</p></x-shadow-container>'
-            : '<x-shadow-container><slot><p data-id="light-consumer-text">Hello from Light DOM</p></slot></x-shadow-container>';
+        let expected;
+        if (process.test.SYNTHETIC_SHADOW_ENABLED) {
+            expected =
+                '<x-shadow-container><slot><p data-id="light-consumer-text">Hello from Light DOM</p></slot></x-shadow-container>';
+        } else {
+            expected =
+                '<x-shadow-container><p data-id="light-consumer-text">Hello from Light DOM</p></x-shadow-container>';
+        }
+
         expect(nodes['x-light-consumer'].innerHTML).toEqual(expected);
     });
 

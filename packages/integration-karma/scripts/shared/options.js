@@ -21,7 +21,7 @@ const TAGS = [`${DISABLE_SYNTHETIC ? 'native' : 'synthetic'}-shadow`, COMPAT && 
 module.exports = {
     // Test configuration
     COMPAT,
-    DISABLE_SYNTHETIC,
+    SYNTHETIC_SHADOW_ENABLED: !DISABLE_SYNTHETIC,
     TAGS,
     GREP: process.env.GREP,
     COVERAGE: Boolean(process.env.COVERAGE),

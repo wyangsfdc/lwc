@@ -133,15 +133,15 @@ describe('event propagation', () => {
             ];
 
             let expectedLogs;
-            if (process.env.DISABLE_SYNTHETIC) {
+            if (process.test.SYNTHETIC_SHADOW_ENABLED) {
+                // TODO [#1138]: {bubbles: false, composed: true} events should invoke event listeners on ancestor hosts
+                expectedLogs = [[nodes.button, nodes.button, composedPath]];
+            } else {
                 expectedLogs = [
                     [nodes.button, nodes.button, composedPath],
                     [nodes['x-button'], nodes['x-button'], composedPath],
                     [nodes['x-container'], nodes['x-container'], composedPath],
                 ];
-            } else {
-                // TODO [#1138]: {bubbles: false, composed: true} events should invoke event listeners on ancestor hosts
-                expectedLogs = [[nodes.button, nodes.button, composedPath]];
             }
 
             expect(actualLogs).toEqual(expectedLogs);
@@ -158,7 +158,7 @@ describe('event propagation', () => {
             expect(actualLogs).toEqual(expectedLogs);
         });
 
-        if (!process.env.DISABLE_SYNTHETIC) {
+        if (process.test.SYNTHETIC_SHADOW_ENABLED) {
             describe('when the ENABLE_NON_COMPOSED_EVENTS_LEAKAGE flag is enabled', () => {
                 beforeEach(() => {
                     setFeatureFlagForTest('ENABLE_NON_COMPOSED_EVENTS_LEAKAGE', true);
@@ -299,13 +299,13 @@ describe('event propagation', () => {
             ];
 
             let expectedLogs;
-            if (process.env.DISABLE_SYNTHETIC) {
+            if (process.test.SYNTHETIC_SHADOW_ENABLED) {
+                expectedLogs = [[nodes['x-button'], nodes['x-button'], composedPath]];
+            } else {
                 expectedLogs = [
                     [nodes['x-button'], nodes['x-button'], composedPath],
                     [nodes['x-container'], nodes['x-container'], composedPath],
                 ];
-            } else {
-                expectedLogs = [[nodes['x-button'], nodes['x-button'], composedPath]];
             }
 
             expect(actualLogs).toEqual(expectedLogs);
@@ -333,7 +333,7 @@ describe('event propagation', () => {
             expect(actualLogs).toEqual(expectedLogs);
         });
 
-        if (!process.env.DISABLE_SYNTHETIC) {
+        if (process.test.SYNTHETIC_SHADOW_ENABLED) {
             describe('when the ENABLE_NON_COMPOSED_EVENTS_LEAKAGE flag is enabled', () => {
                 beforeEach(() => {
                     setFeatureFlagForTest('ENABLE_NON_COMPOSED_EVENTS_LEAKAGE', true);
@@ -471,16 +471,16 @@ describe('event propagation', () => {
             ];
 
             let expectedLogs;
-            if (process.env.DISABLE_SYNTHETIC) {
+            if (process.test.SYNTHETIC_SHADOW_ENABLED) {
                 expectedLogs = [
                     [nodes['x-button'].shadowRoot, nodes['x-button'].shadowRoot, composedPath],
                     [nodes['x-button'], nodes['x-button'], composedPath],
-                    [nodes['x-container'], nodes['x-container'], composedPath],
                 ];
             } else {
                 expectedLogs = [
                     [nodes['x-button'].shadowRoot, nodes['x-button'].shadowRoot, composedPath],
                     [nodes['x-button'], nodes['x-button'], composedPath],
+                    [nodes['x-container'], nodes['x-container'], composedPath],
                 ];
             }
 
@@ -502,7 +502,7 @@ describe('event propagation', () => {
     });
 
     describe('dispatched on lwc:dom="manual" node', () => {
-        if (!process.env.DISABLE_SYNTHETIC) {
+        if (process.test.SYNTHETIC_SHADOW_ENABLED) {
             describe('when the ENABLE_NON_COMPOSED_EVENTS_LEAKAGE flag is enabled', () => {
                 beforeEach(() => {
                     setFeatureFlagForTest('ENABLE_NON_COMPOSED_EVENTS_LEAKAGE', true);
@@ -614,14 +614,14 @@ describe('event propagation', () => {
             ];
 
             let expectedLogs;
-            if (process.env.DISABLE_SYNTHETIC) {
+            if (process.test.SYNTHETIC_SHADOW_ENABLED) {
                 expectedLogs = [
                     [nodes.container_span_manual, nodes.container_span_manual, composedPath],
-                    [nodes['x-container'], nodes['x-container'], composedPath],
                 ];
             } else {
                 expectedLogs = [
                     [nodes.container_span_manual, nodes.container_span_manual, composedPath],
+                    [nodes['x-container'], nodes['x-container'], composedPath],
                 ];
             }
 
@@ -701,13 +701,13 @@ describe('event propagation', () => {
                 ];
 
                 let expectedLogs;
-                if (process.env.DISABLE_SYNTHETIC) {
+                if (process.test.SYNTHETIC_SHADOW_ENABLED) {
+                    expectedLogs = [[nodes.container_div, nodes.container_div, composedPath]];
+                } else {
                     expectedLogs = [
                         [nodes.container_div, nodes.container_div, composedPath],
                         [nodes['x-container'], nodes['x-container'], composedPath],
                     ];
-                } else {
-                    expectedLogs = [[nodes.container_div, nodes.container_div, composedPath]];
                 }
 
                 const actualLogs = dispatchEventWithLog(nodes.container_div, nodes, event);

@@ -425,7 +425,7 @@ describe('MutationObserver is synthetic shadow dom aware.', () => {
             });
         });
     });
-    if (!process.env.DISABLE_SYNTHETIC) {
+    if (process.test.SYNTHETIC_SHADOW_ENABLED) {
         describe('References to mutation observers are not leaked', () => {
             let container;
             beforeEach(() => {

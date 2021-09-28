@@ -314,7 +314,7 @@ describe('Node.getRootNode', () => {
             expect(processingInstruction.getRootNode(composedTrueConfig)).toBe(fragment);
         });
 
-        if (process.env.DISABLE_SYNTHETIC) {
+        if (!process.test.SYNTHETIC_SHADOW_ENABLED) {
             it('native shadow dom', () => {
                 const shadowHost = document.createElement('div');
                 document.body.appendChild(shadowHost);

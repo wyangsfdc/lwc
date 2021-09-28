@@ -66,7 +66,7 @@ describe('Properties overrides', () => {
     });
 });
 
-if (!process.env.DISABLE_SYNTHETIC) {
+if (process.test.SYNTHETIC_SHADOW_ENABLED) {
     describe('synthetic-shadow restrictions', () => {
         let elm;
 

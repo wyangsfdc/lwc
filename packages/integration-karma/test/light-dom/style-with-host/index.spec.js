@@ -2,7 +2,7 @@ import { createElement } from 'lwc';
 import Container from 'x/container';
 
 // synthetic shadow can't do this kind of style encapsulation
-if (process.env.DISABLE_SYNTHETIC === true) {
+if (!process.test.SYNTHETIC_SHADOW_ENABLED) {
     describe('Light DOM styling with :host', () => {
         it(':host can style a containing shadow component', () => {
             const elm = createElement('x-container', { is: Container });

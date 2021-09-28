@@ -36,18 +36,18 @@ describe('Light DOM IDs and fragment links', () => {
         expect(light.querySelector('.go-to-bar').href).toMatch(/#bar$/);
         expect(light.querySelector('.go-to-quux').href).toMatch(/#quux$/);
 
-        if (process.env.DISABLE_SYNTHETIC) {
-            expect(shadow.shadowRoot.querySelector('.foo').id).toEqual('foo');
-            expect(shadow.shadowRoot.querySelector('.quux').id).toEqual('quux');
-            expect(shadow.shadowRoot.querySelector('.go-to-foo').href).toMatch(/#foo$/);
-            expect(shadow.shadowRoot.querySelector('.go-to-bar').href).toMatch(/#bar$/);
-            expect(shadow.shadowRoot.querySelector('.go-to-quux').href).toMatch(/#quux$/);
-        } else {
+        if (process.test.SYNTHETIC_SHADOW_ENABLED) {
             expect(shadow.shadowRoot.querySelector('.foo').id).toMatch(/^foo-\d+$/);
             expect(shadow.shadowRoot.querySelector('.quux').id).toMatch(/^quux-\d+$/);
             expect(shadow.shadowRoot.querySelector('.go-to-foo').href).toMatch(/#foo-\d+$/);
             expect(shadow.shadowRoot.querySelector('.go-to-bar').href).toMatch(/#bar-\d+$/);
             expect(shadow.shadowRoot.querySelector('.go-to-quux').href).toMatch(/#quux-\d+$/);
+        } else {
+            expect(shadow.shadowRoot.querySelector('.foo').id).toEqual('foo');
+            expect(shadow.shadowRoot.querySelector('.quux').id).toEqual('quux');
+            expect(shadow.shadowRoot.querySelector('.go-to-foo').href).toMatch(/#foo$/);
+            expect(shadow.shadowRoot.querySelector('.go-to-bar').href).toMatch(/#bar$/);
+            expect(shadow.shadowRoot.querySelector('.go-to-quux').href).toMatch(/#quux$/);
         }
     });
 });

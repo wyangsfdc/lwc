@@ -9,7 +9,7 @@ beforeEach(() => {
 });
 
 // TODO [#985]: Firefox does not implement delegatesFocus
-if (!process.env.DISABLE_SYNTHETIC) {
+if (process.test.SYNTHETIC_SHADOW_ENABLED) {
     describe('host.focus() when { delegatesFocus: true }', () => {
         it('should focus the host element', () => {
             const elm = createElement('x-focus', { is: DelegatesFocusTrue });

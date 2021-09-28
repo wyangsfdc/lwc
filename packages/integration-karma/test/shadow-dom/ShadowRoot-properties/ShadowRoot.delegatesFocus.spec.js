@@ -3,7 +3,7 @@ import { createElement } from 'lwc';
 
 describe('ShadowRoot.delegatesFocus', () => {
     // TODO [#985]: delegatedFocus is only implemented the native ShadowRoot by Blink
-    if (!process.env.DISABLE_SYNTHETIC) {
+    if (process.test.SYNTHETIC_SHADOW_ENABLED) {
         it('ShadowRoot.delegatesFocus should be false by default', () => {
             class NoDelegatesFocus extends LightningElement {}
 
