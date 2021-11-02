@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: MIT
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
  */
+import * as renderer from '@lwc/engine-impl';
 import { ArrayJoin, ArrayPush, isArray, isNull, isUndefined, KEY__SCOPED_CSS } from '@lwc/shared';
 
 import api from './api';
@@ -47,7 +48,7 @@ function createInlineStyleVNode(content: string): VNode {
 }
 
 export function updateStylesheetToken(vm: VM, template: Template) {
-    const { elm, context, renderer, renderMode, shadowMode } = vm;
+    const { elm, context, renderMode, shadowMode } = vm;
     const { stylesheets: newStylesheets, stylesheetToken: newStylesheetToken } = template;
     const isSyntheticShadow =
         renderMode === RenderMode.Shadow && shadowMode === ShadowMode.Synthetic;
@@ -189,7 +190,7 @@ function getNearestNativeShadowComponent(vm: VM): VM | null {
 }
 
 export function createStylesheet(vm: VM, stylesheets: string[]): VNode | null {
-    const { renderer, renderMode, shadowMode } = vm;
+    const { renderMode, shadowMode } = vm;
     if (renderMode === RenderMode.Shadow && shadowMode === ShadowMode.Synthetic) {
         for (let i = 0; i < stylesheets.length; i++) {
             renderer.insertGlobalStylesheet(stylesheets[i]);
