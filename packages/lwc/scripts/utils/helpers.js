@@ -21,8 +21,8 @@ function getEs6ModuleEntry(pkg) {
     return path.join(pkgDir, pkgJson.module);
 }
 
-function generateTargetName({ targetName, prod, debug }) {
-    return [targetName, debug ? DEBUG_SUFFIX : prod ? '.min' : '', '.js'].join('');
+function generateTargetName({ targetName, prod, debug, lite }) {
+    return [targetName, lite ? '.lite' : '', debug ? DEBUG_SUFFIX : prod ? '.min' : '', '.js'].join('');
 }
 
 function ignoreCircularDependencies({ code, message }) {
@@ -31,7 +31,7 @@ function ignoreCircularDependencies({ code, message }) {
     }
 }
 
-function buildBundleConfig(defaultConfig, { format, target, prod, debug }) {
+function buildBundleConfig(defaultConfig, { format, target, prod, debug, lite }) {
     return {
         ...defaultConfig,
         targetDirectory: path.join(defaultConfig.dir, format),
@@ -39,6 +39,7 @@ function buildBundleConfig(defaultConfig, { format, target, prod, debug }) {
         target,
         prod,
         debug,
+        lite,
     };
 }
 

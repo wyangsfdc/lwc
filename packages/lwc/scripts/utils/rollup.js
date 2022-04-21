@@ -40,7 +40,7 @@ function minifyPlugin() {
 }
 
 function rollupConfig(config) {
-    const { input, format, name, prod, target, targetDirectory, dir, debug = false } = config;
+    const { input, format, name, prod, target, targetDirectory, dir, debug = false, lite } = config;
     const compatMode = target === 'es5';
     return {
         inputOptions: {
@@ -50,6 +50,13 @@ function rollupConfig(config) {
                     rollupReplace({
                         values: {
                             'process.env.NODE_ENV': JSON.stringify('production'),
+                        },
+                        preventAssignment: true,
+                        sourceMap: false, // increases the build time and we don't need it
+                    }),
+                    rollupReplace({
+                        values: {
+                            'process.env.LITE': lite ? 'true' : 'false',
                         },
                         preventAssignment: true,
                         sourceMap: false, // increases the build time and we don't need it

@@ -23,6 +23,10 @@ const COMMON_TARGETS = [
     { target: 'es2017', format: 'iife', prod: true },
     { target: 'es2017', format: 'iife', prod: true, debug: true },
 
+    // lite
+    { target: 'es2017', format: 'iife', prod: true, lite: true },
+    { target: 'es2017', format: 'iife', prod: false, lite: true },
+
     // UMD
     { target: 'es5', format: 'umd', prod: false },
     { target: 'es5', format: 'umd', prod: true },

@@ -50,58 +50,60 @@ export function hydrateComponent(
     Ctor: typeof LightningElement,
     props: { [name: string]: any } = {}
 ) {
-    if (!(element instanceof Element)) {
-        throw new TypeError(
-            `"hydrateComponent" expects a valid DOM element as the first parameter but instead received ${element}.`
-        );
-    }
+    if (!process.env.LITE) {
+        if (!(element instanceof Element)) {
+            throw new TypeError(
+                `"hydrateComponent" expects a valid DOM element as the first parameter but instead received ${element}.`
+            );
+        }
 
-    if (!isFunction(Ctor)) {
-        throw new TypeError(
-            `"hydrateComponent" expects a valid component constructor as the second parameter but instead received ${Ctor}.`
-        );
-    }
+        if (!isFunction(Ctor)) {
+            throw new TypeError(
+                `"hydrateComponent" expects a valid component constructor as the second parameter but instead received ${Ctor}.`
+            );
+        }
 
-    if (!isObject(props) || isNull(props)) {
-        throw new TypeError(
-            `"hydrateComponent" expects an object as the third parameter but instead received ${props}.`
-        );
-    }
+        if (!isObject(props) || isNull(props)) {
+            throw new TypeError(
+                `"hydrateComponent" expects an object as the third parameter but instead received ${props}.`
+            );
+        }
 
-    if (getAssociatedVMIfPresent(element)) {
-        /* eslint-disable-next-line no-console */
-        console.warn(`"hydrateComponent" expects an element that is not hydrated.`, element);
-        return;
-    }
+        if (getAssociatedVMIfPresent(element)) {
+            /* eslint-disable-next-line no-console */
+            console.warn(`"hydrateComponent" expects an element that is not hydrated.`, element);
+            return;
+        }
 
-    try {
-        // Let the renderer know we are hydrating, so it does not replace the existing shadowRoot
-        // and uses the same algo to create the stylesheets as in SSR.
-        setIsHydrating(true);
+        try {
+            // Let the renderer know we are hydrating, so it does not replace the existing shadowRoot
+            // and uses the same algo to create the stylesheets as in SSR.
+            setIsHydrating(true);
 
-        const vm = createVMWithProps(element, Ctor, props);
+            const vm = createVMWithProps(element, Ctor, props);
 
-        hydrateRoot(vm);
+            hydrateRoot(vm);
 
-        // set it back since now we finished hydration.
-        setIsHydrating(false);
-    } catch (e) {
-        // Fallback: In case there's an error while hydrating, let's log the error, and replace the element content
-        //           with the client generated DOM.
+            // set it back since now we finished hydration.
+            setIsHydrating(false);
+        } catch (e) {
+            // Fallback: In case there's an error while hydrating, let's log the error, and replace the element content
+            //           with the client generated DOM.
 
-        /* eslint-disable-next-line no-console */
-        console.error('Recovering from error while hydrating: ', e);
+            /* eslint-disable-next-line no-console */
+            console.error('Recovering from error while hydrating: ', e);
 
-        // We want to preserve the element, so we need to reset the shadowRoot and light dom.
-        resetShadowRootAndLightDom(element, Ctor);
+            // We want to preserve the element, so we need to reset the shadowRoot and light dom.
+            resetShadowRootAndLightDom(element, Ctor);
 
-        // we need to recreate the vm with the hydration flag on, so it re-uses the existing shadowRoot.
-        createVMWithProps(element, Ctor, props);
-        setIsHydrating(false);
+            // we need to recreate the vm with the hydration flag on, so it re-uses the existing shadowRoot.
+            createVMWithProps(element, Ctor, props);
+            setIsHydrating(false);
 
-        connectRootElement(element);
-    } finally {
-        // in case there's an error during recovery
-        setIsHydrating(false);
+            connectRootElement(element);
+        } finally {
+            // in case there's an error during recovery
+            setIsHydrating(false);
+        }
     }
 }

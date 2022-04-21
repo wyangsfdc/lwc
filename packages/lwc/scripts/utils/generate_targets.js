@@ -17,9 +17,9 @@ const isNucleus = process.env.NUCLEUS;
 function groupByInputOptions(configs) {
     const keysToConfigs = {};
     for (const config of configs) {
-        const { input, prod, target } = config;
+        const { input, prod, target, lite } = config;
         // These are the only input options that matter for rollup.rollup()
-        const key = [input, !!prod, target].join('-');
+        const key = [input, !!prod, target, lite].join('-');
         keysToConfigs[key] = keysToConfigs[key] || [];
         keysToConfigs[key].push(config);
     }
