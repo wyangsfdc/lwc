@@ -26,6 +26,7 @@ import {
     isUndefined,
     keys,
 } from '@lwc/shared';
+import features from '@lwc/features';
 
 import { RenderMode, ShadowSupportMode } from '../framework/vm';
 import {
@@ -47,6 +48,12 @@ import {
     HTMLElementConstructor,
 } from './base-bridge-element';
 import { getComponentOrSwappedComponent } from './hot-swaps';
+
+if (process.env.NODE_ENV !== 'production') {
+    if (features.ENABLE_ELEMENT_PATCH) {
+        throw new Error('Compile-time processing of feature flags is broken.');
+    }
+}
 
 export interface ComponentDef {
     name: string;

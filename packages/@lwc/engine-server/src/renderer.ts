@@ -15,9 +15,16 @@ import {
     htmlPropertyToAttribute,
     noop,
 } from '@lwc/shared';
+import features from '@lwc/features';
 
 import { HostNode, HostElement, HostAttribute, HostNodeType } from './types';
 import { classNameToTokenList, tokenListToClassName } from './utils/classes';
+
+if (process.env.NODE_ENV !== 'production') {
+    if (features.ENABLE_ELEMENT_PATCH) {
+        throw new Error('Compile-time processing of feature flags is broken.');
+    }
+}
 
 function unsupportedMethod(name: string): () => never {
     return function () {

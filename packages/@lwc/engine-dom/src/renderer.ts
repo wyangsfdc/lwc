@@ -21,6 +21,13 @@ import {
     getOwnPropertyDescriptor,
 } from '@lwc/shared';
 
+import features from '@lwc/features';
+
+if (process.env.NODE_ENV !== 'production') {
+    if (features.ENABLE_ELEMENT_PATCH) {
+        throw new Error('Compile-time processing of feature flags is broken.');
+    }
+}
 const globalStylesheets: { [content: string]: true } = create(null);
 
 if (process.env.NODE_ENV === 'development') {
