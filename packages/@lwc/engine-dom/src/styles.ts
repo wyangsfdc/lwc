@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
  */
 
-import { isUndefined, getOwnPropertyDescriptor, isArray, isFunction } from '@lwc/shared';
+import { isUndefined, getOwnPropertyDescriptor, isArray, isFunction, create } from '@lwc/shared';
 
 //
 // Feature detection
@@ -31,14 +31,15 @@ const isIE11 = !isUndefined((document as any).documentMode);
 //
 
 // Global cache of style elements used for fast cloning
-let styleElements: Map<string, HTMLStyleElement> = new Map();
+let styleElements: { [content: string]: HTMLStyleElement } = create(null);
 // Global cache of CSSStyleSheets because these need to be unique based on content so the browser
 // can optimize repeated usages across multiple shadow roots
-let stylesheets: Map<string, CSSStyleSheet> = new Map();
+let stylesheets: { [content: string]: CSSStyleSheet } = create(null);
 // Bookkeeping of targets to CSS that has already been injected into them, so we don't duplicate
-let shadowRootsToInsertedStylesheets: WeakMap<ShadowRoot, Set<string>> = new WeakMap();
+let shadowRootsToInsertedStylesheets: WeakMap<ShadowRoot, { [content: string]: true }> =
+    new WeakMap();
 // Same as above, but for the global document to avoid an extra WeakMap lookup for this common case
-let globalInsertedStylesheets: Set<string> = new Set();
+let globalInsertedStylesheets: { [content: string]: true } = create(null);
 
 //
 // Test utilities
@@ -47,10 +48,10 @@ let globalInsertedStylesheets: Set<string> = new Set();
 if (process.env.NODE_ENV === 'development') {
     // @ts-ignore
     window.__lwcResetGlobalStylesheets = () => {
-        styleElements = new Map();
-        stylesheets = new Map();
+        styleElements = create(null);
+        stylesheets = create(null);
         shadowRootsToInsertedStylesheets = new WeakMap();
-        globalInsertedStylesheets = new Set();
+        globalInsertedStylesheets = create(null);
     };
 }
 
@@ -73,11 +74,11 @@ function createStyleElement(content: string) {
         return createFreshStyleElement(content);
     }
 
-    let elm = styleElements.get(content);
+    let elm = styleElements[content];
     if (isUndefined(elm)) {
         // We don't clone every time, because that would be a perf tax on the first time
         elm = createFreshStyleElement(content);
-        styleElements.set(content, elm);
+        styleElements[content] = elm;
     } else {
         // This `<style>` may be repeated multiple times in the DOM, so cache it. It's a bit
         // faster to call `cloneNode()` on an existing node than to recreate it every time.
@@ -89,11 +90,11 @@ function createStyleElement(content: string) {
 function createOrGetConstructableStylesheet(content: string) {
     // It's important for CSSStyleSheets to be unique based on their content, so
     // that adoptedStyleSheets.indexOf(sheet) works
-    let stylesheet = stylesheets.get(content);
+    let stylesheet = stylesheets[content];
     if (isUndefined(stylesheet)) {
         stylesheet = new CSSStyleSheet();
         stylesheet.replaceSync(content);
-        stylesheets.set(content, stylesheet);
+        stylesheets[content] = stylesheet;
     }
     return stylesheet;
 }
@@ -131,7 +132,7 @@ function doInsertStylesheet(content: string, target: ShadowRoot | Document) {
 function getInsertedStylesheetsForShadowRoot(target: ShadowRoot) {
     let insertedStylesheets = shadowRootsToInsertedStylesheets.get(target);
     if (isUndefined(insertedStylesheets)) {
-        insertedStylesheets = new Set();
+        insertedStylesheets = create(null) as { [content: string]: true };
         shadowRootsToInsertedStylesheets.set(target, insertedStylesheets);
     }
     return insertedStylesheets;
@@ -142,11 +143,11 @@ export function insertStylesheet(content: string, target?: ShadowRoot) {
     const insertedStylesheets = isGlobal
         ? globalInsertedStylesheets
         : getInsertedStylesheetsForShadowRoot(target);
-    if (insertedStylesheets.has(content)) {
+    if (insertedStylesheets[content]) {
         // already inserted
         return;
     }
-    insertedStylesheets.add(content);
+    insertedStylesheets[content] = true;
     const documentOrShadowRoot = isGlobal ? document : target;
     doInsertStylesheet(content, documentOrShadowRoot);
 }
