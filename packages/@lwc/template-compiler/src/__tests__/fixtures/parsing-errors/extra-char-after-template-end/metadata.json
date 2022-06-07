@@ -1,0 +1,15 @@
+{
+    "warnings": [
+        {
+            "code": 1075,
+            "message": "LWC1075: Multiple roots found",
+            "level": 1,
+            "location": {
+                "line": 2,
+                "column": 12,
+                "start": 22,
+                "length": 4
+            }
+        }
+    ]
+}
